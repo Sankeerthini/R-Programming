@@ -1,0 +1,61 @@
+# Function to create a special matrix object with caching capability
+makeCacheMatrix <- function(mat = matrix()) {
+  inverse <- NULL
+  
+  # Function to set the matrix
+  setMatrix <- function(newMatrix) {
+    mat <<- newMatrix
+    inverse <<- NULL  # Reset the cache when the matrix changes
+  }
+  
+  # Function to get the matrix
+  getMatrix <- function() {
+    mat
+  }
+  
+  # Function to set the inverse
+  setInverse <- function(newInverse) {
+    inverse <<- newInverse
+  }
+  
+  # Function to get the inverse
+  getInverse <- function() {
+    inverse
+  }
+  
+  # Return a list of functions
+  list(setMatrix = setMatrix, getMatrix = getMatrix,
+       setInverse = setInverse, getInverse = getInverse)
+}
+
+# Function to compute the inverse of the cached matrix
+cacheSolve <- function(cacheMatrix) {
+  # Check if the inverse is already cached
+  inverse <- cacheMatrix$getInverse()
+  
+  # If not cached, calculate the inverse and cache it
+  if (is.null(inverse)) {
+    mat <- cacheMatrix$getMatrix()
+    inverse <- solve(mat)
+    cacheMatrix$setInverse(inverse)
+  } else {
+    cat("Retrieving cached inverse\n")
+  }
+  
+  inverse
+}
+
+# Example Usage:
+# Create a special matrix with caching capability
+myMatrix <- makeCacheMatrix(matrix(c(4, 1, 2, 3), 2, 2))
+
+# Compute the inverse (calculates and caches)
+inverse1 <- cacheSolve(myMatrix)
+print("Inverse 1:")
+print(inverse1)
+
+# Retrieve the cached inverse (no recalculation)
+inverse2 <- cacheSolve(myMatrix)
+print("Inverse 2:")
+print(inverse2)
+
